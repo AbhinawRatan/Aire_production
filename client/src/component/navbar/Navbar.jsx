@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
 import logo from '../../logo.svg';
 import './navbar.css';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Navbar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
