@@ -4,13 +4,24 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: -apple-system, BlinkMacSystemFont,  'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+:root {
+  --font-family: 'Manrope', sans-serif;
 
+  --gradient-text: linear-gradient(89.97deg, #AE67FA 1.84%, #F49867 102.67%);
+  --gradient-bar: linear-gradient(103.22deg, #AE67FA -13.86%, #F49867 99.55%);
+  
+  --color-bg: #040C18;
+  --color-footer : #031B34;
+  --color-blog: #042c54;
+  --color-text: #81AFDD;
+  --color-subtext: #FF8A71;
+}
 .hide-scroll-bar::-webkit-scrollbar {
   display: none;
 }
@@ -54,8 +65,8 @@ code {
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  background: #060c1a;
+  box-shadow: 0 8px 32px 0 #090A1A;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -74,13 +85,13 @@ code {
 }
 
 .gradient-05 {
-  background: linear-gradient(-53.13deg, rgba(45, 72, 152, 0.75), rgba(0, 0, 0, 0));
+  background: linear-gradient(-53.13deg, #162c5f, #00000000);
 }
 
 .gradient-04 {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.04) 0%,
+    rgba(65, 9, 154, 0.04) 0%,
     rgba(255, 255, 255, 0) 100%
   );
 }
@@ -127,4 +138,18 @@ code {
     #260b80 53.65%,
     #3c0251 100%
   );
+}
+.bg-blue-gradient {
+  background: linear-gradient(
+    157.81deg,
+    #def9fa -43.27%,
+    #bef3f5 -21.24%,
+    #9dedf0 12.19%,
+    #7de7eb 29.82%,
+    #5ce1e6 51.94%,
+    #33bbcf 90.29%
+  );
+}
+.bg-discount-gradient {
+  background: linear-gradient(125.17deg, #272727 0%, #11101d 100%);
 }

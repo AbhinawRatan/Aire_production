@@ -1,78 +1,97 @@
 import React, { useState } from 'react';
 
 const examples = [
-  'Introduce yourself',
-  'Copy and paste your resume',
-  'Describe the job role to AI',
-  'What are your weaknesses?',
-  'Why do you want this job?',
-  'Why should we hire you?',
-  'What is your greatest accomplishment?',
+  'Can you please tell me more about the company culture and work environment?',
+  'What would you say are the most important skills needed to be successful in this role?',
+  'How does the company measure success for this position?',
+  'Can you walk me through a typical day or week for someone in this role?',
+  'Are there opportunities for growth and advancement within the company?'
 ];
 
-const Chat = () => {
-  const [chat, setChat] = useState([]);
-  const [input, setInput] = useState('');
+const Aire = () => {
+  const [chat, setChat] = useState([]); // State variable to store the chat history
+  const [input, setInput] = useState(''); // State variable to store the user's current input
+  const [title, setTitle] = useState(''); // State variable to store the title of the conversation
+  const [chatHistory, setChatHistory] = useState([]); // State variable to store the complete chat history
   
+  // Function to handle sending a message
   const handleSend = async () => {
-    if (input.trim()) {
-      setChat([...chat, { role: 'user', message: input }]);
-      setInput('');
-      
-      const response = await fetch('http://localhost:5000/api/chatbot', {
+    if (input.trim) {
+      setChat([...chat, { role: 'user', content: input }]); // Add user's message to the chat history
+      setInput(''); // Clear the input field
+
+      // Send a POST request to the chat API
+      const response = await fetch('https://codexxx-kiyn.onrender.com/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: [
+          messages: [
             ...chat,
-            { role: 'user', message: input },
-          ],
-        }),
+            { role: 'user', content: input },
+          ]
+        })
       });
-      
-      const resdata = await response.json();
-      setChat([...chat, { role: 'assistant', message: resdata.choices[0].message }]);
+
+      // Read the response data from the API
+      const readData = response.body.pipeThrough(new TextDecoderStream()).getReader();
+      let aiRes = '';
+      while (true) {
+        const { done, value } = await readData.read();
+        if (done) {
+          break;
+        }
+        aiRes += value;
+        setChat([...chat, { role: 'user', content: input }, { role: 'assistant', content: aiRes }]); // Add user and assistant messages to the chat history
+      }
+
+      if (!title) {
+        // If the title is not set, send a POST request to the title API
+        const createTitle = await fetch('https://codexxx-kiyn.onrender.com/api/title', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: input,
+          }),
+        });
+
+        const title = await createTitle.json();
+        setTitle(title?.title);
+        setChatHistory([...chatHistory, title]);
+      }
     }
-  };
+  }
 
   return (
-    <div className="h-screen w-screen flex bg-[#050509]">
-      <div className="w-[20%] h-screen bg-[#0c0c15] text-white p-4 overflow-y-hidden hide-scroll">
+    <div className="h-screen w-screen flex bg-[#050509] body">
+      <div className="w-[20%] h-screen bg-[#0c0c15] text-white p-4 overflow-y-hidden hide-scroll  glassmorphism" onClick={()=> {
+        setChat ([]);
+        setTitle('');
+      }}>
         <div>
-          <button className="w-full h-[50px] border rounded bg-slate-600 over">
+          <button className="w-full h-[50px]  over bg-discount-gradient rounded">
             + New Interview
           </button>
         </div>
-        <div className="h-[70%] mt-8 shadow-lg overflow-y-auto hide-scroll-bar mb-4 gradient-04">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, index) => (
-            <div
-              className="py-3 text-center rounded mt-4 text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer"
-              key={index}
-            >
-              <span className="mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-message"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M8 9h8" />
-                  <path d="M8 13h6" />
-                  <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5.5l-3 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-                </svg>
-              </span>
-              <span>Past interviews</span>
-            </div>
-          ))}
+        <div className=' h-[70%] overflow-scroll shadow-lg hide-scroll-bar mb-4 '>
+          {
+            chatHistory.map((item, index) => (
+              <div className=' py-3 text-center rounded mt-4 text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer'>
+                <span className=' mr-4'>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M8 9h8"></path>
+                    <path d="M8 13h6"></path>
+                    <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
+                  </svg>
+                </span>
+                <span className=' text-left'>{item.title}</span>
+              </div>
+            ))
+          }
         </div>
         <div>
           <div className="overflow-y-scroll shadow-lg hide-scroll-bar h-[20%] border-t">
@@ -107,12 +126,17 @@ const Chat = () => {
           </div>
         </div>
       </div>
-      <div className="w-[80%]">
+    
+      <div className="w-[80%] gradient-05">
+        
+    
         {chat.length > 0 ? (
-          <div className="h-[80%] overflow-scroll hide-scroll-bar text-white pt-8">    {Chat.map((items, index) => (
-              <div className={`w-[60%]  mx-auto p-6 flex  ${items.role === 'assistant' && 'bg-slate-900 rounded'}`}>
-                <span className='mr-8 p-2 bg-slate-500 rounded-full h-full'>
-                  {items.role === "assistant" ? (
+          <div className="h-[80%] overflow-scroll hide-scroll-bar text-white pt-8" id="autoscrollDiv">
+           
+            {chat.map((item, index) => (
+                    <div className={` w-[60%] mx-auto p-6 text-white flex ${item.role === 'assistant' && 'bg-slate-900 rounded'}`}>
+                    <span className='mr-8 p-2 bg-slate-500 rounded-full h-full'>
+                  {item.role === "assistant" ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="icon icon-tabler icon-tabler-users-plus"
@@ -151,34 +175,52 @@ const Chat = () => {
                       <path d="M14.5 9h.01"></path>
                       <path d="M9.5 13a3.5 3.5 0 0 0 5 0"></path>
                     </svg>
+                    
                   )}
+                  
+                  
+                  
                 </span>
-                <div className='leading-loose'>{items.message}</div>
+                <div className='leading-loose'style={{ whiteSpace: 'break-spaces' }}>{item.content}
+                </div>
               </div>
-            ))}
+
+            ))
+ 
+            }
+
           </div>
         ) : (
           <div className="h-[80%]  flex flex-col justify-center items-center text-white gradient-04">
             <div className="text-4xl font-bold mb-8">Aire</div>
             <div className=" flex flex-wrap justify-around max-w-[900px]">
-              {examples.map((items, index) => (
-                <div className="text-lg font-light mt-4 p-4  rounded cursor-pointer hover:bg-slate-800 min-[400px] ">
-                  {items}
+              {examples.map((item, index) => (
+                <div className="text-lg font-light mt-4 p-4  rounded cursor-pointer hover:bg-slate-800 min-[400px]"
+                 onClick={() => setInput(item)}>
+                  {item}
                 </div>
               ))}
             </div>
           </div>
+          
         )}
-
-        <div className=" h-[20%]">
+        
+        <div className=" h-[20%] ">
           <div className=" flex flex-col items-center justify-center w-full h-full text-white">
             <div className=" w-[60%] flex justify-center relative">
-              <input
-                type="text" onChange={(e) => setInput(e.target.value)} value ={input}
-                className=" w-full rounded-lg p-4 pr-16 bg-slate-800 text-white"
-                placeholder="Type your message here..."
-              />
-              <span className=" absolute right-4 top-4 cursor-pointer" onClick={()=> input.trim()?handleSend : undefined}>
+            <input
+              type="text"
+               onChange={(e) => setInput(e.target.value)}
+                 value ={input}
+               className=" w-full rounded-lg p-4 pr-16 bg-slate-800 text-white"
+              placeholder="Type your message here..."
+             onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  }}
+/>
+              <span className=' absolute right-4 top-4 cursor-pointer' onClick={() => input.trim() ? handleSend() : undefined }>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="icon icon-tabler icon-tabler-brand-telegram"
@@ -195,17 +237,6 @@ const Chat = () => {
                   <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path>
                 </svg>
               </span>
-              <span>
-              <button className='absolute right-4 top-4 cursor-pointer px-10'>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-microphone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-   <path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z"></path>
-   <path d="M5 10a7 7 0 0 0 14 0"></path>
-   <path d="M8 21l8 0"></path>
-   <path d="M12 17l0 4"></path>
-</svg>
-                </button>
-                </span>
             </div>
             <small className=" text-slate-500 mt-2">
               AI is still in beta testing.
@@ -214,7 +245,8 @@ const Chat = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 
-export default Chat;
+export default Aire;
