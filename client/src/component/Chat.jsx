@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from "../../src/logo.svg"
 
 const examples = [
   'Can you please tell me more about the company culture and work environment?',
@@ -192,8 +193,9 @@ const Aire = () => {
           </div>
         ) : (
           <div className="h-[80%]  flex flex-col justify-center items-center text-white gradient-04">
-            <div className="text-4xl font-bold mb-8">Aire</div>
-            <div className=" flex flex-wrap justify-around max-w-[900px]">
+ <div className="">
+          <img src={logo} />
+        </div>            <div className=" flex flex-wrap justify-around max-w-[900px]">
               {examples.map((item, index) => (
                 <div className="text-lg font-light mt-4 p-4  rounded cursor-pointer hover:bg-slate-800 min-[400px]"
                  onClick={() => setInput(item)}>

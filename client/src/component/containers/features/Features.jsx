@@ -8,8 +8,8 @@ const featuresData = [
     text: 'Start the conversation with th Aire bot by introducing yourself your background and the job role you are preparing for.',
   },
   {
-    title: '2.Explan the Job Role to AI',
-    text: 'Explan the details of any job role you are preparing for Aire will use his huge set of database to currate a set of question for you.',
+    title: '2.Explain the Job Role to AI',
+    text: 'Explain the details of any job role you are preparing for Aire will use his huge set of database to currate a set of question for you.',
   },
   {
     title: '3.Set up an unique experience ',
